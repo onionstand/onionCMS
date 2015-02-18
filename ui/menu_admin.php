@@ -12,11 +12,11 @@
   			<!-- Right Nav Section -->
   			<ul class="right">
           <li>
-            <a href="#">Pocetna</a>
+            <a href="#">Admin Home</a>
           </li>
           <li class="divider"></li>
   				<li>
-  					<a href="dodaj_dete">Dodaj dete</a>
+  					<a href="add_page">Add page</a>
   				</li>
           <li class="divider"></li>
           <li>
@@ -26,15 +26,15 @@
   			</ul>
         <ul class="left">
           <li>
-            <a href="promeni_sifru">Promeni sifru</a>
+            <a href="">Test</a>
           </li>
           <li class="divider"></li>
           <li>
-            <a href="dodaj_uciteljicu">Dodaj uciteljicu</a>
+            <a href="administration/edit_user">Edit Users</a>
           </li>
           <li class="divider"></li>
           <li>
-            <a href="logout">Izloguj se</a>
+            <a href="logout">Logout</a>
           </li>
         </ul>
   		</section>

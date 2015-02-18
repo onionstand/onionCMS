@@ -11,7 +11,7 @@
 		<h3>Image manager</h3>
 	</div>
 	<div class="small-12 large-12 columns">
-		<ul class="clearing-thumbs small-block-grid-2 medium-block-grid-6" data-clearing data-options="{open_selectors:'img';}">
+		<ul class="clearing-thumbs small-block-grid-2 medium-block-grid-6" data-clearing >
 			<?php foreach ($files_images as $file) {
 				if (($file!="..") AND ($file!=".")) {?>
 					<li class="text-center">
@@ -19,7 +19,7 @@
 							<img src="<?php echo $UPLOADS."/tn/" . $file; ?>" alt="<?php echo $UPLOADS . $file; ?>" data-caption="<?php echo  $SCHEME.'://'.$HOST.$BASE.'/'.$UPLOADS.$file; ?>">
 						</a>
 						<div class="clearfix"></div>
-						<a href="/administration/image_manager_delete/<?php echo $file;?>" class="button tiny" style="margin-top:1em;">Delete</a>
+						<a href="<?php echo  $SCHEME.'://'.$HOST.$BASE;?>/administration/image_manager_delete/<?php echo $file;?>" class="button tiny" style="margin-top:1em;">Delete</a>
 					</li>
 				<?php }?>
 			<?php } ?>

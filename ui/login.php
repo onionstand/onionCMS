@@ -29,7 +29,7 @@
 				</div>
 				<div class="small-12 columns">
 					<label>Captcha <small>required</small>
-						<input type="text" id="captcha" required pattern="[a-zA-Z]+" name="captcha">
+						<input type="text" id="captcha" required name="captcha">
 					</label>
 					<small class="error">Captcha is requred.</small>
 				</div>

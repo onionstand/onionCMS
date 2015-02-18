@@ -1,6 +1,6 @@
 <?php
 class Admin{
-	//login to cms
+//login to cms
 	function login($f3) {
 		if ($f3->get('SESSION.poweradmin')) $f3->reroute('/administration');
 		$f3->clear('alarm');
@@ -14,6 +14,7 @@ class Admin{
 	function logout($f3) {
 		$f3->clear('SESSION');
 		$f3->reroute('/');
+		$f3->clear('BACKEND_USER');
 	}
 
 	function authUser($f3) {
@@ -25,6 +26,7 @@ class Admin{
 			if($pass === TRUE) {
 				$administrator->load(array('name=?',$f3->get('POST.name')));
 				$f3->set('SESSION.poweradmin',$administrator->name);
+				$f3->set('SESSION.poweradmin_id',$administrator->id);
 				$f3->reroute('/administration');
 			}
 			else {
@@ -61,7 +63,7 @@ class Admin{
         }
         return false;
     }
-    //Captcha for login,
+//Captcha for login,
     function imgCaptcha($f3) {
 		$img_captcha=new Image();
 		$f3->set(
@@ -70,8 +72,104 @@ class Admin{
 			)
 		);
 	}
-	//end of login to cms
+//end of login to cms
 
+//check name availability $f3->get('POST.name')
+	 function checkNameAvailability($f3,$name,$id=0) {
+	 	if ($id===0) {
+	 		$check_name=new DB\SQL\Mapper($f3->get('DB'),'user');
+			$check_name_bool=$check_name->findone(array('name = ?',$name));
+			return $check_name_bool;
+	 	}
+	 	else{
+	 		$check_name=new DB\SQL\Mapper($f3->get('DB'),'user');
+			$check_name_bool=$check_name->findone(array('name = ? AND id != ?',$name,$id));
+			return $check_name_bool;
+	 	}
+	 }
+
+//end check name availability
+
+
+//New administartor
+	function editUser($f3) {
+		$f3->set('html_title','Administration - Add User');
+
+		$fields = array('id','name','email','user_level');
+		$user_query=new DB\SQL\Mapper($f3->get('DB'),'user',$fields);
+		$user=$user_query->find();
+		$f3->set('user',$user);
+		$f3->set('content','admin_edit_user.php');
+		echo View::instance()->render('layout_admin.php');
+	}
+	function editUserNewUserSave($f3) {
+		if($this->checkNameAvailability($f3,$f3->get('POST.name'))) {
+			$f3->set('alarm','That username is not available');
+			$f3->set('html_title','Administration - Add User');
+			$fields = array('id','name','email','user_level');
+			$user_query=new DB\SQL\Mapper($f3->get('DB'),'user',$fields);
+			$user=$user_query->find();
+			$f3->set('user',$user);
+			$f3->set('content','admin_edit_user.php');
+			echo View::instance()->render('layout_admin.php');
+		}
+		else{
+			$add_user=new DB\SQL\Mapper($f3->get('DB'),'user');
+			$add_user->copyFrom('POST');
+			$crypt = \Bcrypt::instance();
+	        $new_password = $crypt->hash($f3->get('POST.password'));
+			$add_user->password=$new_password;
+			$add_user->save();
+			$f3->reroute('/administration/edit_user');
+		}
+	}
+	function changeUserDetails ($f3) {
+		$user_details=new DB\SQL\Mapper($f3->get('DB'),'user');
+		if ($f3->get('POST.name')){
+			$id_user=$f3->get('POST.id');
+			$user_details->load(array('id=?',$id_user));
+			$user_details->copyTo('POST');
+			$f3->set('html_title','Administation - change user details');
+			$f3->set('content','admin_edit_user_details.php');
+			echo View::instance()->render('layout_admin.php');
+		}
+	}
+	function changeUserDetailsPost ($f3) {
+		$user_details=new DB\SQL\Mapper($f3->get('DB'),'user');
+		if ($f3->get('POST.name')){
+			$id_user=$f3->get('POST.id');
+			if($this->checkNameAvailability($f3, $f3->get('POST.name'),$f3->get('POST.id'))) {
+
+				$f3->set('alarm','That username is already in use!');
+				$f3->set('html_title','Administration-Edit user dtails');
+				$f3->set('content','admin_error.php');
+				echo View::instance()->render('layout_admin.php');
+			}
+			else{
+				var_dump($f3->get('POST'));
+				$user_details->load(array('id=?',$f3->get('POST.id')));
+				//$user_details->copyFrom('POST');
+				$user_details->name=$f3->get('POST.name');
+				$user_details->email=$f3->get('POST.email');
+				$user_details->user_level=$f3->get('POST.user_level');
+				$user_details->save();
+				$f3->reroute('/administration/edit_user');
+			}
+		}
+	}
+
+	function changeUserDetailsPassword ($f3) {
+		$user_details=new DB\SQL\Mapper($f3->get('DB'),'user');
+		if ($f3->get('POST.name')){
+			$id_user=$f3->get('POST.id');
+			$user_details->load(array('id=?',$id_user));
+			$crypt = \Bcrypt::instance();
+        	$new_password = $crypt->hash($f3->get('POST.password'));
+			$user_details->password=$new_password;
+			$user_details->save();
+			$f3->reroute('/administration/edit_user');
+		}
+	}
 
 
 	function administration($f3){
@@ -82,7 +180,7 @@ class Admin{
 		echo View::instance()->render('layout_admin.php');
 	}
 
-	//add news
+//add news
 	function addNews($f3) {
 		$f3->set('html_title','Administration-add news');
 		$f3->set('content','add_news.php');
@@ -148,9 +246,9 @@ class Admin{
 		$f3->reroute('/administration/image_manager');
 	}
 
-	function imageManagerDelete($f3) {
-		$image_name_delete = $f3->get('PARAMS.image_name_delete');
-		echo "uploads/".$image_name_delete;
-		//unlink($filename);
+	function imageManagerDelete($f3,$params) {
+		unlink($f3->get('ROOT').'\\'.substr($f3->get('BASE'), 1).'\\uploads\\'.$params['image_name_delete']);
+		unlink($f3->get('ROOT').'\\'.substr($f3->get('BASE'), 1).'\\uploads\\tn\\'.$params['image_name_delete']);
+		$f3->reroute('/administration/image_manager');
 	}
 }
