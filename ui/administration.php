@@ -36,7 +36,7 @@
 							<td><?php echo $news['author']; ?></td>
 							<td><?php echo $news['tag']; ?></td>
 							<td>
-								<a href="news_edit/<?php echo $news['id'];?>">Edit</a>
+								<a href="administration/edit_news/<?php echo $news['id'];?>">Edit</a>
 							</td>
 						</tr>
 					<?php } ?>

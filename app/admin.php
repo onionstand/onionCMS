@@ -189,21 +189,53 @@ class Admin{
 
 	function addNewsSave($f3) {
 		$save_news=new DB\SQL\Mapper($f3->get('DB'),'news');
-		$sef_title_not_unique=$save_news->findone(array('sef_title = ?',$f3->get('POST.sef_title')));
+		$sef_title_not_unique=$save_news->findone(array('sef_title = ?',Web::instance()->slug($f3->get('POST.sef_title'))));
 		if($sef_title_not_unique){
-        	$f3->clear('alarm');
+			$f3->clear('alarm');
 			$f3->set('alarm','Sef title already exists.');
 			$f3->set('html_title','Administration-add news');
 			$f3->set('content','add_news.php');
 			echo View::instance()->render('layout_admin.php');
-        }
-        else{
+		}
+		else{
 			$save_news->copyFrom('POST');
 			$date_strtotime=strtotime( $f3->get('POST.date') );
 			$date_for_base=date("Y-m-d",$date_strtotime);
 			$save_news->date=$date_for_base;
 			$save_news->sef_title=Web::instance()->slug($f3->get('POST.sef_title'));
 			$save_news->save();
+			$f3->reroute('/administration');
+		}
+	}
+
+	function editNews($f3) {
+		$f3->set('html_title','Administration-edit news');
+		//$news_id=$f3->get('PARAMS.news_id');
+		$news_query=new DB\SQL\Mapper($f3->get('DB'),'news');
+		$news_query->load(array('id=?',$f3->get('PARAMS.news_id')));
+		$news_query->copyTo('POST');
+
+		$f3->set('content','add_news.php');
+		echo View::instance()->render('layout_admin.php');
+	}
+	function editNewsSave($f3) {
+		$edit_news=new DB\SQL\Mapper($f3->get('DB'),'news');
+		$sef_title_not_unique=$edit_news->findone(array('sef_title = ? AND id != ?',Web::instance()->slug($f3->get('POST.sef_title')),$f3->get('POST.id')));
+		if($sef_title_not_unique){
+			$f3->clear('alarm');
+			$f3->set('alarm','Sef title already exists.');
+			$f3->set('html_title','Administration-add news');
+			$f3->set('content','add_news.php');
+			echo View::instance()->render('layout_admin.php');
+		}
+		else {
+			$edit_news->load(array('id=?',$f3->get('POST.id')));
+			$edit_news->copyFrom('POST');
+			$date_strtotime=strtotime( $f3->get('POST.date') );
+			$date_for_base=date("Y-m-d",$date_strtotime);
+			$edit_news->date=$date_for_base;
+			$edit_news->sef_title=Web::instance()->slug($f3->get('POST.sef_title'));
+			$edit_news->save();
 			$f3->reroute('/administration');
 		}
 	}

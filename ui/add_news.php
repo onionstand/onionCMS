@@ -84,4 +84,9 @@
 			<a href="administration" class="button">Cancel</a>
 		</div>
 	</div>
+	<?php if (isset($_POST['id'])){
+		?>
+		<input type="hidden" name="id" value="<?php echo $_POST["id"];?>"/>
+		<?php
+	} ?>
 </form>

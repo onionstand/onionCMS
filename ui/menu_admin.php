@@ -12,7 +12,7 @@
   			<!-- Right Nav Section -->
   			<ul class="right">
           <li>
-            <a href="#">Admin Home</a>
+            <a href="administration">Admin Home</a>
           </li>
           <li class="divider"></li>
   				<li>
