@@ -26,7 +26,7 @@
 								<a href="#" data-reveal-id="alarm<?php echo $news['id'];?>">Delete</a>
 								<div id="alarm<?php echo $news['id'];?>" class="reveal-modal" data-reveal>
 									<h2>Are you sure that you want to delete "<?php echo $news['title']; ?>"?</h2>
-									<p class="lead"><a href="news_delete/<?php echo $news['id']; ?>">Delete</a></p>
+									<p class="lead"><a href="administration/delete_news/<?php echo $news['id']; ?>">Delete</a></p>
 									<a class="close-reveal-modal">&#215;</a>
 								</div>
 							</td>

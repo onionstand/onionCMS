@@ -20,6 +20,7 @@
     <script type="text/javascript">
       tinymce.init({
         selector: "#tinymce_textarea",
+        relative_urls : false,
         plugins: [
          "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
          "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",

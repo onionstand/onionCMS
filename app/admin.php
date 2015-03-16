@@ -240,6 +240,13 @@ class Admin{
 		}
 	}
 
+	function deleteNews($f3) {
+		$delete_news=new DB\SQL\Mapper($f3->get('DB'),'news');
+		$delete_news->load(array('id=?',$f3->get('PARAMS.news_id')));
+		$delete_news->erase();
+		$f3->reroute('/administration');
+	}
+
 	function imageManager($f3) {
 		$f3->set('html_title','Image Manager');
 		$f3->set('files_images',scandir($f3->get('UPLOADS')."/tn"));
