@@ -16,6 +16,7 @@
 <div class="row">
 	<div class="large-9 columns" role="content">
         <?php include "blog_temp.php";?>
+        <?php echo $this->render(Base::instance()->get('paginate_browse_pos')); ?>
     </div>
     <aside class="large-3 columns">
     	<h5>Categories</h5>
