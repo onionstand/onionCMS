@@ -5,7 +5,7 @@ $f3->set('DEBUG',3);
 $f3->config('app/config.ini');
 $f3->set('DB',new DB\SQL($f3->get('DATABASE_CONNECTION.0'),$f3->get('DATABASE_CONNECTION.1'),$f3->get('DATABASE_CONNECTION.2')));
 
-$f3->route('GET /','Front->welcome');
+$f3->route(array('GET /@paginate_pos','GET /'),'Front->welcome');
 
 $f3->route('GET /login','Admin->login');
 $f3->route('POST /login','Admin->authUser');

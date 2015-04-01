@@ -1,29 +1,41 @@
 <ul class="pagination" role="menubar" aria-label="Pagination">
-	<li class="arrow unavailable" aria-disabled="true">
-		<a href="">&laquo; Previous</a>
-	</li>
+	<?php if ($pos_p!=0) {?>
+		<li class="arrow">
+			<a href="0">&laquo; First</a>
+		</li>
+		<li class="arrow">
+			<a href="<?php echo $pos_p-1;?>">&laquo; Previous</a>
+		</li>
+	<?php }
+	else{ ?>
+		<li class="arrow unavailable" aria-disabled="true">
+			<a href="">&laquo; First</a>
+		</li>
+		<li class="arrow unavailable" aria-disabled="true">
+			<a href="">&laquo; Previous</a>
+		</li>
+	<?php }	?>
+	
+
 	<li class="current">
-		<a href="">1</a>
+		<a href=""><?php echo $pos_p;?></a>
 	</li>
-	<li>
-		<a href="">2</a>
-	</li>
-	<li>
-		<a href="">3</a>
-	</li>
-	<li>
-		<a href="">4</a>
-	</li>
-	<li class="unavailable" aria-disabled="true">
-		<a href="">&hellip;</a>
-	</li>
-	<li>
-		<a href="">12</a>
-	</li>
-	<li>
-		<a href="">13</a>
-	</li>
-	<li class="arrow">
-		<a href="">Next &raquo;</a>
-	</li>
+
+
+	<?php if ($pos_p < $count_p-1) {?>
+		<li class="arrow">
+			<a href="<?php echo $pos_p+1;?>">Next &raquo;</a>
+		</li>
+		<li class="arrow">
+			<a href="<?php echo $count_p-1;?>"> Last &raquo;</a>
+		</li>
+	<?php }
+	else{ ?>
+		<li class="arrow unavailable" aria-disabled="true">
+			<a href="">Next &raquo;</a>
+		</li>
+		<li class="arrow unavailable" aria-disabled="true">
+			<a href=""> Last &raquo;</a>
+		</li>
+	<?php }	?>
 </ul>
