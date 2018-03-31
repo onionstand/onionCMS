@@ -2,7 +2,7 @@
 
 /*
 
-	Copyright (c) 2009-2015 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2017 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 
@@ -10,7 +10,13 @@
 	terms of the GNU General Public License as published by the Free Software
 	Foundation, either version 3 of the License, or later.
 
-	Please see the LICENSE file for more information.
+	Fat-Free Framework is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	General Public License for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with Fat-Free Framework.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
@@ -28,7 +34,7 @@ class Basket extends Magic {
 		//! Current item identifier
 		$id,
 		//! Current item contents
-		$item=array();
+		$item=[];
 
 	/**
 	*	Return TRUE if field is defined
@@ -59,7 +65,7 @@ class Basket extends Magic {
 			return $this->id;
 		if (array_key_exists($key,$this->item))
 			return $this->item[$key];
-		user_error(sprintf(self::E_Field,$key));
+		user_error(sprintf(self::E_Field,$key),E_USER_ERROR);
 		return FALSE;
 	}
 
@@ -80,7 +86,7 @@ class Basket extends Magic {
 	*	@param $val mixed
 	**/
 	function find($key=NULL,$val=NULL) {
-		$out=array();
+		$out=[];
 		if (isset($_SESSION[$this->key])) {
 			foreach ($_SESSION[$this->key] as $id=>$item)
 				if (!isset($key) ||
@@ -116,7 +122,7 @@ class Basket extends Magic {
 			return $this->item=$found[0]->item;
 		}
 		$this->reset();
-		return array();
+		return [];
 	}
 
 	/**
@@ -169,7 +175,7 @@ class Basket extends Magic {
 	**/
 	function reset() {
 		$this->id=NULL;
-		$this->item=array();
+		$this->item=[];
 	}
 
 	/**
@@ -183,11 +189,13 @@ class Basket extends Magic {
 	/**
 	*	Hydrate item using hive array variable
 	*	@return NULL
-	*	@param $key string
+	*	@param $var array|string
 	**/
-	function copyfrom($key) {
-		foreach (\Base::instance()->get($key) as $key=>$val)
-			$this->item[$key]=$val;
+	function copyfrom($var) {
+		if (is_string($var))
+			$var=\Base::instance()->$var;
+		foreach ($var as $key=>$val)
+			$this->set($key,$val);
 	}
 
 	/**
@@ -211,7 +219,7 @@ class Basket extends Magic {
 			unset($_SESSION[$this->key]);
 			return $out;
 		}
-		return array();
+		return [];
 	}
 
 	/**
@@ -221,7 +229,8 @@ class Basket extends Magic {
 	**/
 	function __construct($key='basket') {
 		$this->key=$key;
-		@session_start();
+		if (session_status()!=PHP_SESSION_ACTIVE)
+			session_start();
 		Base::instance()->sync('SESSION');
 		$this->reset();
 	}

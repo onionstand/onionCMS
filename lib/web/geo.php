@@ -2,7 +2,7 @@
 
 /*
 
-	Copyright (c) 2009-2015 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2017 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 
@@ -10,7 +10,13 @@
 	terms of the GNU General Public License as published by the Free Software
 	Foundation, either version 3 of the License, or later.
 
-	Please see the LICENSE file for more information.
+	Fat-Free Framework is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	General Public License for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with Fat-Free Framework.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
@@ -28,14 +34,14 @@ class Geo extends \Prefab {
 		$ref=new \DateTimeZone($zone);
 		$loc=$ref->getLocation();
 		$trn=$ref->getTransitions($now=time(),$now);
-		$out=array(
+		$out=[
 			'offset'=>$ref->
-				getOffset(new \DateTime('now',new \DateTimeZone('GMT')))/3600,
+				getOffset(new \DateTime('now',new \DateTimeZone('UTC')))/3600,
 			'country'=>$loc['country_code'],
 			'latitude'=>$loc['latitude'],
 			'longitude'=>$loc['longitude'],
 			'dst'=>$trn[0]['isdst']
-		);
+		];
 		unset($ref);
 		return $out;
 	}
@@ -49,7 +55,7 @@ class Geo extends \Prefab {
 		$fw=\Base::instance();
 		$web=\Web::instance();
 		if (!$ip)
-			$ip=$fw->get('IP');
+			$ip=$fw->IP;
 		$public=filter_var($ip,FILTER_VALIDATE_IP,
 			FILTER_FLAG_IPV4|FILTER_FLAG_IPV6|
 			FILTER_FLAG_NO_RES_RANGE|FILTER_FLAG_NO_PRIV_RANGE);
@@ -66,7 +72,7 @@ class Geo extends \Prefab {
 		if (($req=$web->request('http://www.geoplugin.net/json.gp'.
 			($public?('?ip='.$ip):''))) &&
 			$data=json_decode($req['body'],TRUE)) {
-			$out=array();
+			$out=[];
 			foreach ($data as $key=>$val)
 				if (!strpos($key,'currency') && $key!=='geoplugin_status'
 					&& $key!=='geoplugin_region')
@@ -81,21 +87,21 @@ class Geo extends \Prefab {
 	*	@return array|FALSE
 	*	@param $latitude float
 	*	@param $longitude float
+	*	@param $key string
 	**/
-	function weather($latitude,$longitude) {
+	function weather($latitude,$longitude,$key) {
 		$fw=\Base::instance();
 		$web=\Web::instance();
-		$query=array(
+		$query=[
 			'lat'=>$latitude,
-			'lng'=>$longitude,
-			'username'=>$fw->hash($fw->get('IP'))
-		);
+			'lon'=>$longitude,
+			'APPID'=>$key,
+			'units'=>'metric'
+		];
 		return ($req=$web->request(
-			'http://ws.geonames.org/findNearByWeatherJSON?'.
-				http_build_query($query))) &&
-			($data=json_decode($req['body'],TRUE)) &&
-			isset($data['weatherObservation'])?
-			$data['weatherObservation']:
+			'http://api.openweathermap.org/data/2.5/weather?'.
+				http_build_query($query)))?
+			json_decode($req['body'],TRUE):
 			FALSE;
 	}
 

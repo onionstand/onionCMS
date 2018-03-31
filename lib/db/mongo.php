@@ -2,7 +2,7 @@
 
 /*
 
-	Copyright (c) 2009-2015 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2017 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 
@@ -10,7 +10,13 @@
 	terms of the GNU General Public License as published by the Free Software
 	Foundation, either version 3 of the License, or later.
 
-	Please see the LICENSE file for more information.
+	Fat-Free Framework is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	General Public License for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with Fat-Free Framework.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
@@ -31,6 +37,8 @@ class Mongo {
 		$dsn,
 		//! MongoDB object
 		$db,
+		//! Legacy flag
+		$legacy,
 		//! MongoDB log
 		$log;
 
@@ -51,21 +59,30 @@ class Mongo {
 	}
 
 	/**
-	*	Return MongoDB profiler results
+	*	Return MongoDB profiler results (or disable logging)
+	*	@param $flag bool
 	*	@return string
 	**/
-	function log() {
-		$cursor=$this->selectcollection('system.profile')->find();
-		foreach (iterator_to_array($cursor) as $frame)
-			if (!preg_match('/\.system\..+$/',$frame['ns']))
-				$this->log.=date('r',$frame['ts']->sec).' ('.
-					sprintf('%.1f',$frame['millis']).'ms) '.
-					$frame['ns'].' ['.$frame['op'].'] '.
-					(empty($frame['query'])?
-						'':json_encode($frame['query'])).
-					(empty($frame['command'])?
-						'':json_encode($frame['command'])).
-					PHP_EOL;
+	function log($flag=TRUE) {
+		if ($flag) {
+			$cursor=$this->db->selectcollection('system.profile')->find();
+			foreach (iterator_to_array($cursor) as $frame)
+				if (!preg_match('/\.system\..+$/',$frame['ns']))
+					$this->log.=date('r',$frame['ts']->sec).' ('.
+						sprintf('%.1f',$frame['millis']).'ms) '.
+						$frame['ns'].' ['.$frame['op'].'] '.
+						(empty($frame['query'])?
+							'':json_encode($frame['query'])).
+						(empty($frame['command'])?
+							'':json_encode($frame['command'])).
+						PHP_EOL;
+		} else {
+			$this->log=FALSE;
+			if ($this->legacy)
+				$this->db->setprofilinglevel(-1);
+			else
+				$this->db->command(['profile'=>-1]);
+		}
 		return $this->log;
 	}
 
@@ -75,7 +92,12 @@ class Mongo {
 	**/
 	function drop() {
 		$out=$this->db->drop();
-		$this->setprofilinglevel(2);
+		if ($this->log!==FALSE) {
+			if ($this->legacy)
+				$this->db->setprofilinglevel(2);
+			else
+				$this->db->command(['profile'=>2]);
+		}
 		return $out;
 	}
 
@@ -86,7 +108,19 @@ class Mongo {
 	*	@param $args array
 	**/
 	function __call($func,array $args) {
-		return call_user_func_array(array($this->db,$func),$args);
+		return call_user_func_array([$this->db,$func],$args);
+	}
+
+	/**
+	*	Return TRUE if legacy driver is loaded
+	*	@return bool
+	**/
+	function legacy() {
+		return $this->legacy;
+	}
+
+	//! Prohibit cloning
+	private function __clone() {
 	}
 
 	/**
@@ -97,9 +131,14 @@ class Mongo {
 	**/
 	function __construct($dsn,$dbname,array $options=NULL) {
 		$this->uuid=\Base::instance()->hash($this->dsn=$dsn);
-		$class=class_exists('\MongoClient')?'\MongoClient':'\Mongo';
-		$this->db=new \MongoDB(new $class($dsn,$options?:array()),$dbname);
-		$this->setprofilinglevel(2);
+		if ($this->legacy=class_exists('\MongoClient')) {
+			$this->db=new \MongoDB(new \MongoClient($dsn,$options?:[]),$dbname);
+			$this->db->setprofilinglevel(2);
+		}
+		else {
+			$this->db=(new \MongoDB\Client($dsn,$options?:[]))->$dbname;
+			$this->db->command(['profile'=>2]);
+		}
 	}
 
 }
