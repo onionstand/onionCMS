@@ -33,7 +33,7 @@
 	<body>
 		<header>
 			<div class="container-header">
-				<div><img src="/v_front/img/enef-logo.png" alt="Enef Centar"></div>
+				<div><img src="/v_front/img/logo.png" alt="Company"></div>
 				
 				<div class="search">
 					<form method="get" class="search-form" action="/pretraga">
@@ -45,8 +45,8 @@
 				<div>
 					<i class="material-icons phone-head">phone_iphone</i>
 					<span>
-						<strong>NAZOVITE NAS</strong><br>
-						<small>+381 11 263 77 77</small>
+						<strong>CALL US</strong><br>
+						<small>012 345 678</small>
 					</span>
 				</div>
 			</div>
@@ -54,12 +54,12 @@
 		
 		<nav>
 			<div class="container-nav">
-				<a href="" class="cat-title"><i class="material-icons">local_offer</i>Naši Proizvodi</a>
+				<a href="" class="cat-title"><i class="material-icons">local_offer</i>Our Products</a>
 				<div class="nav-right">
 					<div class="menu">
 						<a href="/"><i class="material-icons">home</i></a>
-						<a href="/o-nama">O nama</a>
-						<a href="/kontakt">Kontakt</a>
+						<a href="/o-nama">About Us</a>
+						<a href="/kontakt">Contact</a>
 					</div>
 					<div>
 						<a href="/korpa"><i class="material-icons">shopping_cart</i><span class="cart-qty-number"><?php echo $cart_qty;?></span></a>
@@ -84,11 +84,11 @@
 					<hr>
 				</div>
 				<div class="tagcloud">
-					<a href="#">Kvaka</a>
-					<a href="#">Vrata za kuce</a>
-					<a href="#">Kamena Vuna</a>
-					<a href="#">Vrata za graze</a>
-					<a href="#">Kaktus</a>
+					<a href="#">Dresses</a>
+					<a href="#">Routers & Modems</a>
+					<a href="#">Watches</a>
+					<a href="#">Jewellery</a>
+					<a href="#">Motherboards</a>
 				</div>
 			</div>
 			<?php  echo $this->render(Base::instance()->get('content')); ?>
@@ -96,7 +96,7 @@
 
 		<footer>
 			<div class="container-footer">
-				<p>© 2018 ENEF centar. Sva prava rezervisana.</p>
+				<p>© 2018 Company.</p>
 				<div class="footer-icons">
 					<a href="#"><i class="material-icons">mail_outline</i></a>
 				</div>

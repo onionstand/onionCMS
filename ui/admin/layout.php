@@ -46,6 +46,7 @@
 				-->
 				<ul class="menu">
 					<li><a href="/administration">Admin</a></li>
+					<li><a href="/administration/edit_user">Administrators</a></li>
 					<li><a href="/administration/list-categories">Categories</a></li>
 					<li><a href="/administration/list-products">Products</a></li>
 					<li><a href="/administration/list-pages">Pages</a></li>

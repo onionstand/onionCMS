@@ -1,7 +1,7 @@
 <div class="content">
 	<div class="breadcrumbs">
 		<ol class="breadcrumb">
-			<li><a href="<?php echo $SCHEME.'://'.$HOST; ?>">Početna</a></li>
+			<li><a href="<?php echo $SCHEME.'://'.$HOST; ?>">Home</a></li>
 			<?php if (isset($_POST['sef_url'])){
 				?>
 				<li>
@@ -21,10 +21,10 @@
 		<div class="table-r">
 			<table>
 				<tr>
-					<th>Ime</th>
-					<th>Cena</th>
-					<th>Količina</th>
-					<th>Iznos</th>
+					<th>Name</th>
+					<th>Price</th>
+					<th>Qty</th>
+					<th>Total</th>
 					<th></th>
 				</tr>
 				<?php

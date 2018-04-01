@@ -78,6 +78,13 @@ if ($logged_in->isLoggedIn($f3)) {
 
 	//elfinder
 	$f3->route('GET /elfinder_file','admin\toolsclass->elfinder');
+	//Users
+	$f3->route('POST /administration/edit_user_details','admin\administratorsclass->changeUserDetails');
+	$f3->route('POST /administration/edit_user_details_save','admin\administratorsclass->changeUserDetailsPost');
+	$f3->route('GET /administration/edit_user','admin\administratorsclass->editUser');
+	$f3->route('POST /administration/edit_user','admin\administratorsclass->editUserNewUserSave');
+	$f3->route('GET /administration/edit_user_change_password/@id','admin\administratorsclass->changeUserDetailsPassword');
+	$f3->route('POST /administration/edit_user_password_save','admin\administratorsclass->changeUserDetailsPasswordSave');
 
 
 }
