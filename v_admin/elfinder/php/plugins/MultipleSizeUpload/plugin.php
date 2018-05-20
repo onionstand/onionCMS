@@ -66,7 +66,7 @@ class elFinderPluginMultipleSizeUpload extends elFinderPlugin {
 		
 
 
-		copy($src, $volume->getPath($thash).'\tn-'.$name);
+		copy($src, $volume->getPath($thash).'/tn-'.$name);
 		$src_300x300 = $volume->getPath($thash).'\tn-'.$name;
 		$this->resize($volume, $src_300x300, $srcImgInfo, $opts['smallWidth'], $opts['smallHeight'], $opts['quality'], $opts['preserveExif']);
 		
